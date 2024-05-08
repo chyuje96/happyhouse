@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.ssafy.happyhouse.model.mapper.AptDealMapper">
+	<!-- 아파트 검색 -->
+	<select id="getSidoCode" resultType="DongCode">
+		select dongCode, sidoName
+		from dongcode
+		where gugunName is null
+		order by dongCode;
+	</select>
+	
+	<select id="getGugunCode" parameterType="string" resultType="DongCode">
+		select dongCode, gugunName
+		from dongCode
+		where dongName is null
+		and gugunName is not null
+		and left(dongCode, 2) like left(#{sido}, 2)
+		order by dongCode
+	</select>
+
+	<select id="getDongCode" parameterType="string" resultType="DongCode">
+		select dongCode, sidoName, gugunName, dongName
+		from dongcode
+		where dongName is not null
+		and left(dongCode, 2) like left(#{sido}, 2)
+		and left(dongCode, 5) like left(#{gugun}, 5)
+		order by dongCode
+	</select>
+	
+	<select id="getAptInDong" parameterType="string" resultType="houseInfo">
+		select * from houseinfo
+		where dongCode = #{dong} 
+		order by apartmentName
+	</select>
+	
+	<select id="getDealbyAptCode" resultType="houseDeal">
+		select * from housedeal
+		where aptCode = #{aptCode}
+		order by dealYear desc, dealMonth desc, dealDay desc
+		limit 30;
+	</select>
+	
+	<select id="getAptOne" resultType="houseInfo">
+		select * from houseinfo
+		where aptCode = #{aptCode}
+	</select>
+	
+	<!-- 관심 지역 -->
+	<select id="getPreferList" resultType="preferred">
+		select * from preferred
+		where userId = #{userId}
+	</select>
+	
+	<insert id="setPrefer">
+		insert into preferred(sidoName, gugunName, dongName, dongCode, userId, aptCode)
+		values (#{sidoName}, #{gugunName}, #{dongName}, #{dongCode}, #{userId}, #{aptCode})
+	</insert>
+	
+	<delete id="deletePrefer">
+		delete from preferred
+		where no = #{no}
+	</delete>
+	
+
+</mapper>
